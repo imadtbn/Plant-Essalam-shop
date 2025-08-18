@@ -3,135 +3,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مشتلة السلام</title>
+  <title>مشتلة السلام 🌱</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    body {font-family:'Tajawal',sans-serif;margin:0;display:flex;flex-direction:column;min-height:100vh;background:#f5f5f5;color:#333}
-    header {background:#2e7d32;color:#fff;text-align:center;padding:15px;font-size:1.5rem}
-    main {flex:1}
-    .category {padding:20px}
-    .category-header {margin-bottom:15px}
-    .category-header h2 {font-size:1.4rem;color:#2e7d32}
-    .products {display:grid;gap:15px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
-    .card {background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1);text-align:center}
-    .card img {width:100%;height:150px;object-fit:cover;border-radius:8px}
-    .card h3 {margin:10px 0;font-size:1.1rem}
-    .card p {margin:5px 0;color:#555}
-    .btn {margin-top:8px;padding:8px 12px;border:none;background:#2e7d32;color:#fff;border-radius:6px;cursor:pointer}
-    .btn:hover {background:#1b5e20}
-    footer {background:#2e7d32;color:#fff;text-align:center;padding:10px;margin-top:auto}
-
-    /* النافذة المنبثقة */
-    .modal {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:1000}
-    .modal-content {background:#fff;padding:20px;border-radius:10px;width:90%;max-width:400px;text-align:center}
-    .modal-content h3{margin-top:0}
-    .modal-content input{width:100%;padding:8px;margin:8px 0;border:1px solid #ccc;border-radius:6px}
+    body {font-family: 'Tajawal', sans-serif; margin:0; background:#f9f9f9; color:#333;}
+    header {background:#2e7d32; color:#fff; padding:1rem; text-align:center;}
+    h1 {margin:0; font-size:1.8rem;}
+    .products {display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:15px; padding:20px;}
+    .card {background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); padding:15px; text-align:center;}
+    .card img {width:100%; height:160px; object-fit:cover; border-radius:10px;}
+    .card h3 {margin:10px 0; font-size:1.2rem;}
+    .card p {margin:5px 0; color:#555;}
+    .btn {background:#2e7d32; color:#fff; padding:8px 12px; border:none; border-radius:6px; cursor:pointer;}
+    .btn:hover {background:#1b5e20;}
+    #cart {position:fixed; bottom:20px; left:20px; background:#fff; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.2); cursor:pointer;}
+    #cart span {background:#c62828; color:#fff; font-size:14px; padding:2px 6px; border-radius:10px; position:absolute; top:8px; right:8px;}
+    .cart-modal {position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center;}
+    .cart-content {background:#fff; padding:20px; border-radius:10px; width:90%; max-width:500px;}
+    .cart-content h2 {margin-top:0;}
+    .cart-item {display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #eee;}
+    .checkout {margin-top:15px; text-align:center;}
+    input, textarea {width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:6px;}
   </style>
 </head>
 <body>
-  <header>🌱 مشتلة السلام</header>
+  <header>
+    <h1>🌱 مشتلة السلام</h1>
+  </header>
 
-  <main id="categories-container"></main>
+  <section class="products" id="products"></section>
 
-  <footer>© 2025 مشتلة السلام — بيع الشتلات والخدمات الزراعية</footer>
+  <!-- زر السلة -->
+  <div id="cart"><i class="fas fa-shopping-cart fa-lg"></i><span id="cart-count">0</span></div>
 
-  <!-- نافذة بيانات العميل -->
-  <div class="modal" id="order-modal">
-    <div class="modal-content">
-      <h3>إتمام الطلب</h3>
-      <p id="selected-product"></p>
-      <input type="text" id="customer-name" placeholder="✏️ الاسم الكامل" required>
-      <input type="tel" id="customer-phone" placeholder="📱 رقم الهاتف" required>
-      <button class="btn" onclick="confirmOrder()">إرسال الطلب</button>
-      <button class="btn" style="background:#c62828" onclick="closeModal()">إلغاء</button>
+  <!-- نافذة السلة -->
+  <div class="cart-modal" id="cart-modal">
+    <div class="cart-content">
+      <h2>🛒 سلة المشتريات</h2>
+      <div id="cart-items"></div>
+      <div class="checkout">
+        <h3>معلومات الزبون</h3>
+        <input type="text" id="customerName" placeholder="الاسم الكامل" required>
+        <input type="tel" id="customerPhone" placeholder="رقم الهاتف" required>
+        <textarea id="customerAddress" placeholder="العنوان"></textarea>
+        <button class="btn" onclick="submitOrder()">تأكيد الطلب</button>
+        <button class="btn" style="background:#c62828" onclick="closeCart()">إغلاق</button>
+      </div>
     </div>
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwf3RgEZ31JDu7JLv9t_4aMEZR2mXJ2kmlFfmDiYDTDQw1lgeuBoVpiAYgcG2Y2XImwsQ/exec";
-    const WHATSAPP_NUMBER = "213697743721"; // رقم واتساب
+    let cart = [];
 
-    let selectedProduct = null;
-
-    // تحميل الفئات والمنتجات
-    async function loadData() {
-      const cats = await (await fetch(API_URL+"?sheet=categories")).json();
-      const prods = await (await fetch(API_URL+"?sheet=products")).json();
-      renderCategories(cats, prods);
-    }
-
-    // عرض الفئات والمنتجات
-    function renderCategories(categories, products) {
-      const container = document.getElementById("categories-container");
+    // تحميل المنتجات
+    async function loadProducts() {
+      const res = await fetch(API_URL + "?action=getProducts");
+      const data = await res.json();
+      const container = document.getElementById("products");
       container.innerHTML = "";
-      categories.forEach(cat => {
-        const section = document.createElement("section");
-        section.className = "category";
-        section.innerHTML = `
-          <div class="category-header"><h2><i class="fas fa-leaf"></i> ${cat.name}</h2></div>
-          <div class="products" id="cat-${cat.id}"></div>
+      data.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${p.image || 'https://via.placeholder.com/200x160'}" alt="">
+          <h3>${p.name}</h3>
+          <p>الفئة: ${p.category}</p>
+          <p>السعر: ${p.price} دج</p>
+          <button class="btn" onclick='addToCart(${JSON.stringify(p)})'>إضافة للسلة</button>
         `;
-        container.appendChild(section);
-
-        // منتجات الفئة
-        const catProducts = products.filter(p => p.category === cat.name);
-        const prodContainer = section.querySelector(".products");
-        catProducts.forEach(p => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-            <img src="${p.image || 'https://via.placeholder.com/200x150'}" alt="">
-            <h3>${p.name}</h3>
-            <p>السعر: ${p.price} دج</p>
-            <button class="btn" onclick='openModal(${JSON.stringify(p)})'>شراء عبر واتساب</button>
-          `;
-          prodContainer.appendChild(card);
-        });
+        container.appendChild(card);
       });
     }
 
-    // فتح نافذة إدخال بيانات العميل
-    function openModal(product) {
-      selectedProduct = product;
-      document.getElementById("selected-product").textContent = `🪴 المنتج: ${product.name} — 💰 ${product.price} دج`;
-      document.getElementById("order-modal").style.display = "flex";
+    // إضافة للسلة
+    function addToCart(product) {
+      cart.push(product);
+      document.getElementById("cart-count").innerText = cart.length;
     }
-    function closeModal() { document.getElementById("order-modal").style.display = "none"; }
 
-    // تأكيد الطلب
-    function confirmOrder() {
-      const name = document.getElementById("customer-name").value.trim();
-      const phone = document.getElementById("customer-phone").value.trim();
-      if (!name || !phone) { alert("يرجى إدخال الاسم ورقم الهاتف"); return; }
+    // فتح السلة
+    document.getElementById("cart").onclick = () => {
+      document.getElementById("cart-modal").style.display = "flex";
+      renderCart();
+    };
 
-      const msg = `طلب جديد من مشتلة السلام:%0A
-👤 الاسم: ${name}%0A
-📱 الهاتف: ${phone}%0A
-🪴 المنتج: ${selectedProduct.name}%0A
-💰 السعر: ${selectedProduct.price} دج%0A
-📅 التاريخ: ${new Date().toLocaleDateString("ar-DZ")}`;
-
-      // فتح واتساب
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
-
-      // إرسال نسخة للـ Google Sheets
-      fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "addOrder",
-          customerName: name,
-          phone: phone,
-          items: selectedProduct.name,
-          total: selectedProduct.price,
-          status: "جديد",
-          date: new Date().toLocaleString()
-        })
+    function renderCart() {
+      const container = document.getElementById("cart-items");
+      container.innerHTML = "";
+      let total = 0;
+      cart.forEach((item,i)=>{
+        total += parseFloat(item.price);
+        container.innerHTML += `<div class="cart-item">
+          <span>${item.name}</span>
+          <span>${item.price} دج</span>
+        </div>`;
       });
-
-      closeModal();
+      container.innerHTML += `<div class="cart-item"><strong>المجموع</strong> <strong>${total} دج</strong></div>`;
     }
 
-    loadData();
+    function closeCart(){document.getElementById("cart-modal").style.display="none";}
+
+    // إرسال الطلب
+    async function submitOrder(){
+      const name = document.getElementById("customerName").value.trim();
+      const phone = document.getElementById("customerPhone").value.trim();
+      const address = document.getElementById("customerAddress").value.trim();
+      if(!name || !phone){alert("الرجاء إدخال الاسم والهاتف"); return;}
+      const order = {
+        customerName:name,
+        customerPhone:phone,
+        customerAddress:address,
+        items: cart.map(i=>i.name).join(", "),
+        total: cart.reduce((t,i)=>t+parseFloat(i.price),0)
+      };
+      const res = await fetch(API_URL+"?action=addOrder",{
+        method:"POST",
+        body: JSON.stringify(order)
+      });
+      const msg = await res.text();
+      alert("✅ تم إرسال الطلب بنجاح");
+      cart=[]; document.getElementById("cart-count").innerText=0;
+      closeCart();
+    }
+
+    loadProducts();
   </script>
 </body>
 </html>
