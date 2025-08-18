@@ -89,8 +89,10 @@ function renderProducts(products) {
   container.innerHTML = "";
   const grouped = {};
   products.forEach(p => {
-    (grouped[p.category] ||= []).push(p);
+    const category = (p["الفئة "] || "غير مصنف").trim();
+    (grouped[category] ||= []).push(p);
   });
+
   Object.entries(grouped).forEach(([catName, items]) => {
     const section = document.createElement("section");
     section.className = "category";
@@ -102,9 +104,9 @@ function renderProducts(products) {
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <img src="${p.image || 'https://via.placeholder.com/200x150'}" alt="">
-        <h3>${p.name}</h3>
-        <p>السعر: ${p.price} دج</p>
+        <img src="${p["رابط الصورة"] || 'https://via.placeholder.com/200x150'}" alt="">
+        <h3>${p["اسم المنتج"]}</h3>
+        <p>السعر: ${p["السعر "]} دج</p>
         <button class="btn">شراء عبر واتساب</button>
       `;
       card.querySelector("button").onclick = () => openModal(p);
@@ -116,7 +118,7 @@ function renderProducts(products) {
 
 function openModal(product) {
   selectedProduct = product;
-  document.getElementById("productInfo").innerText = `🪴 ${product.name} — 💰 ${product.price} دج`;
+  document.getElementById("productInfo").innerText = `🪴 ${product["اسم المنتج"]} — 💰 ${product["السعر "]} دج`;
   document.getElementById("orderModal").style.display = "flex";
 }
 
@@ -132,21 +134,21 @@ function submitOrder() {
     alert("الرجاء إدخال الاسم ورقم الهاتف");
     return;
   }
-  // إرسال إلى جوجل شيت
+  // إرسال الطلب إلى Google Sheets
   fetch(API_URL, {
     method:"POST",
     body: JSON.stringify({
       action:"addOrder",
       customerName:name,
       phone:phone,
-      items:selectedProduct.name,
-      total:selectedProduct.price,
+      items:selectedProduct["اسم المنتج"],
+      total:selectedProduct["السعر "],
       status:"جديد"
     })
   });
 
   // فتح واتساب
-  const msg = `طلب جديد:%0A👤 الاسم: ${name}%0A📞 الهاتف: ${phone}%0A🪴 المنتج: ${selectedProduct.name}%0A💰 السعر: ${selectedProduct.price} دج`;
+  const msg = `طلب جديد:%0A👤 الاسم: ${name}%0A📞 الهاتف: ${phone}%0A🪴 المنتج: ${selectedProduct["اسم المنتج"]}%0A💰 السعر: ${selectedProduct["السعر "]} دج`;
   window.open(`https://wa.me/213697743721?text=${msg}`, "_blank");
 
   closeModal();
@@ -154,6 +156,7 @@ function submitOrder() {
 
 loadProducts();
 </script>
+
 
 </body>
 </html>
