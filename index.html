@@ -3,131 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مشتلة السلام 🌱</title>
+  <title>مشتلة السلام</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    body {font-family: 'Tajawal', sans-serif; margin:0; background:#f9f9f9; color:#333;}
+    body {font-family: 'Tajawal', Arial, sans-serif; margin:0; padding:0; background:#f8fdf8;}
     header {background:#2e7d32; color:#fff; padding:1rem; text-align:center;}
-    h1 {margin:0; font-size:1.8rem;}
-    .products {display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:15px; padding:20px;}
-    .card {background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); padding:15px; text-align:center;}
-    .card img {width:100%; height:160px; object-fit:cover; border-radius:10px;}
-    .card h3 {margin:10px 0; font-size:1.2rem;}
-    .card p {margin:5px 0; color:#555;}
-    .btn {background:#2e7d32; color:#fff; padding:8px 12px; border:none; border-radius:6px; cursor:pointer;}
+    h1 {margin:0;}
+    .category {padding:1rem;}
+    .category-header {margin-bottom:1rem;}
+    .products {display:flex; flex-wrap:wrap; gap:1rem;}
+    .card {background:#fff; border:1px solid #ddd; border-radius:10px; padding:1rem; flex:1 1 calc(25% - 1rem); box-sizing:border-box; text-align:center;}
+    .card img {width:100%; border-radius:8px;}
+    .card h3 {margin:0.5rem 0;}
+    .btn {background:#2e7d32; color:#fff; border:none; padding:0.5rem 1rem; border-radius:5px; cursor:pointer;}
     .btn:hover {background:#1b5e20;}
-    #cart {position:fixed; bottom:20px; left:20px; background:#fff; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.2); cursor:pointer;}
-    #cart span {background:#c62828; color:#fff; font-size:14px; padding:2px 6px; border-radius:10px; position:absolute; top:8px; right:8px;}
-    .cart-modal {position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center;}
-    .cart-content {background:#fff; padding:20px; border-radius:10px; width:90%; max-width:500px;}
-    .cart-content h2 {margin-top:0;}
-    .cart-item {display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #eee;}
-    .checkout {margin-top:15px; text-align:center;}
-    input, textarea {width:100%; padding:8px; margin:5px 0; border:1px solid #ddd; border-radius:6px;}
+    footer {background:#2e7d32; color:#dfeede; text-align:center; padding:1rem; margin-top:2rem;}
+    @media(max-width:768px){
+      .card {flex:1 1 calc(50% - 1rem);}
+    }
+    @media(max-width:480px){
+      .card {flex:1 1 100%;}
+    }
+
+    /* النموذج */
+    .modal {display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;}
+    .modal-content {background:#fff; padding:1rem; border-radius:8px; width:90%; max-width:400px;}
+    .modal-content h3 {margin-top:0;}
+    .form-group {margin-bottom:0.5rem;}
+    .form-group label {display:block; margin-bottom:0.3rem;}
+    .form-group input {width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:5px;}
+    .actions {text-align:right; margin-top:1rem;}
   </style>
 </head>
 <body>
-  <header>
-    <h1>🌱 مشتلة السلام</h1>
-  </header>
 
-  <section class="products" id="products"></section>
+<header>
+  <h1><i class="fas fa-seedling"></i> مشتلة السلام</h1>
+</header>
 
-  <!-- زر السلة -->
-  <div id="cart"><i class="fas fa-shopping-cart fa-lg"></i><span id="cart-count">0</span></div>
+<main id="categories-container">
+  <p style="text-align:center; padding:2rem;">⏳ جارٍ تحميل المنتجات...</p>
+</main>
 
-  <!-- نافذة السلة -->
-  <div class="cart-modal" id="cart-modal">
-    <div class="cart-content">
-      <h2>🛒 سلة المشتريات</h2>
-      <div id="cart-items"></div>
-      <div class="checkout">
-        <h3>معلومات الزبون</h3>
-        <input type="text" id="customerName" placeholder="الاسم الكامل" required>
-        <input type="tel" id="customerPhone" placeholder="رقم الهاتف" required>
-        <textarea id="customerAddress" placeholder="العنوان"></textarea>
-        <button class="btn" onclick="submitOrder()">تأكيد الطلب</button>
-        <button class="btn" style="background:#c62828" onclick="closeCart()">إغلاق</button>
-      </div>
+<footer>
+  <p>© 2025 مشتلة السلام — جميع الحقوق محفوظة</p>
+</footer>
+
+<!-- نافذة إدخال بيانات العميل -->
+<div class="modal" id="orderModal">
+  <div class="modal-content">
+    <h3>إتمام الطلب</h3>
+    <p id="productInfo"></p>
+    <div class="form-group">
+      <label>الاسم الكامل</label>
+      <input type="text" id="customerName" required>
+    </div>
+    <div class="form-group">
+      <label>رقم الهاتف</label>
+      <input type="text" id="customerPhone" required>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="submitOrder()">إرسال الطلب</button>
+      <button class="btn" style="background:#c62828;" onclick="closeModal()">إلغاء</button>
     </div>
   </div>
+</div>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxMYSinB7TRS-wtpunBOT9Telb6pKAMvuRTWfc12elRnvcwsO0VUT1s0arOfG-S9-vPHA/exec";
-    let cart = [];
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxMYSinB7TRS-wtpunBOT9Telb6pKAMvuRTWfc12elRnvcwsO0VUT1s0arOfG-S9-vPHA/exec";
+let selectedProduct = null;
 
-    // تحميل المنتجات
-    async function loadProducts() {
-      const res = await fetch(API_URL + "?action=getProducts");
-      const data = await res.json();
-      const container = document.getElementById("products");
-      container.innerHTML = "";
-      data.forEach(p => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${p.image || 'https://via.placeholder.com/200x160'}" alt="">
-          <h3>${p.name}</h3>
-          <p>الفئة: ${p.category}</p>
-          <p>السعر: ${p.price} دج</p>
-          <button class="btn" onclick='addToCart(${JSON.stringify(p)})'>إضافة للسلة</button>
-        `;
-        container.appendChild(card);
-      });
-    }
+async function loadProducts() {
+  try {
+    const res = await fetch(API_URL + "?sheet=products");
+    const products = await res.json();
+    renderProducts(products);
+  } catch (err) {
+    console.error("خطأ في جلب المنتجات:", err);
+    document.getElementById("categories-container").innerHTML = "<p style='text-align:center;color:red;'>⚠️ تعذر تحميل المنتجات</p>";
+  }
+}
 
-    // إضافة للسلة
-    function addToCart(product) {
-      cart.push(product);
-      document.getElementById("cart-count").innerText = cart.length;
-    }
+function renderProducts(products) {
+  const container = document.getElementById("categories-container");
+  container.innerHTML = "";
+  const grouped = {};
+  products.forEach(p => {
+    (grouped[p.category] ||= []).push(p);
+  });
+  Object.entries(grouped).forEach(([catName, items]) => {
+    const section = document.createElement("section");
+    section.className = "category";
+    section.innerHTML = `
+      <div class="category-header"><h2><i class="fas fa-leaf"></i> ${catName}</h2></div>
+      <div class="products"></div>
+    `;
+    items.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${p.image || 'https://via.placeholder.com/200x150'}" alt="">
+        <h3>${p.name}</h3>
+        <p>السعر: ${p.price} دج</p>
+        <button class="btn">شراء عبر واتساب</button>
+      `;
+      card.querySelector("button").onclick = () => openModal(p);
+      section.querySelector(".products").appendChild(card);
+    });
+    container.appendChild(section);
+  });
+}
 
-    // فتح السلة
-    document.getElementById("cart").onclick = () => {
-      document.getElementById("cart-modal").style.display = "flex";
-      renderCart();
-    };
+function openModal(product) {
+  selectedProduct = product;
+  document.getElementById("productInfo").innerText = `🪴 ${product.name} — 💰 ${product.price} دج`;
+  document.getElementById("orderModal").style.display = "flex";
+}
 
-    function renderCart() {
-      const container = document.getElementById("cart-items");
-      container.innerHTML = "";
-      let total = 0;
-      cart.forEach((item,i)=>{
-        total += parseFloat(item.price);
-        container.innerHTML += `<div class="cart-item">
-          <span>${item.name}</span>
-          <span>${item.price} دج</span>
-        </div>`;
-      });
-      container.innerHTML += `<div class="cart-item"><strong>المجموع</strong> <strong>${total} دج</strong></div>`;
-    }
+function closeModal() {
+  document.getElementById("orderModal").style.display = "none";
+  selectedProduct = null;
+}
 
-    function closeCart(){document.getElementById("cart-modal").style.display="none";}
+function submitOrder() {
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  if (!name || !phone) {
+    alert("الرجاء إدخال الاسم ورقم الهاتف");
+    return;
+  }
+  // إرسال إلى جوجل شيت
+  fetch(API_URL, {
+    method:"POST",
+    body: JSON.stringify({
+      action:"addOrder",
+      customerName:name,
+      phone:phone,
+      items:selectedProduct.name,
+      total:selectedProduct.price,
+      status:"جديد"
+    })
+  });
 
-    // إرسال الطلب
-    async function submitOrder(){
-      const name = document.getElementById("customerName").value.trim();
-      const phone = document.getElementById("customerPhone").value.trim();
-      const address = document.getElementById("customerAddress").value.trim();
-      if(!name || !phone){alert("الرجاء إدخال الاسم والهاتف"); return;}
-      const order = {
-        customerName:name,
-        customerPhone:phone,
-        customerAddress:address,
-        items: cart.map(i=>i.name).join(", "),
-        total: cart.reduce((t,i)=>t+parseFloat(i.price),0)
-      };
-      const res = await fetch(API_URL+"?action=addOrder",{
-        method:"POST",
-        body: JSON.stringify(order)
-      });
-      const msg = await res.text();
-      alert("✅ تم إرسال الطلب بنجاح");
-      cart=[]; document.getElementById("cart-count").innerText=0;
-      closeCart();
-    }
+  // فتح واتساب
+  const msg = `طلب جديد:%0A👤 الاسم: ${name}%0A📞 الهاتف: ${phone}%0A🪴 المنتج: ${selectedProduct.name}%0A💰 السعر: ${selectedProduct.price} دج`;
+  window.open(`https://wa.me/213697743721?text=${msg}`, "_blank");
 
-    loadProducts();
-  </script>
+  closeModal();
+}
+
+loadProducts();
+</script>
+
 </body>
 </html>
