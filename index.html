@@ -6,14 +6,20 @@
   <title>مشتلة السلام</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    body{font-family:'Tajawal',Arial,sans-serif;margin:0;background:#f8fdf8}
-    header{background:#2e7d32;color:#fff;padding:1rem;text-align:center;position:sticky;top:0;z-index:100}
-    nav{margin-top:.5rem}
-    nav a{color:#fff;margin:0 .5rem;text-decoration:none;font-weight:bold}
+    body{font-family:'Tajawal',Arial,sans-serif;margin:0;background:#f8fdf8;scroll-behavior:smooth}
+    header{background:#2e7d32;color:#fff;padding:1rem;position:sticky;top:0;z-index:1000}
+    header h1{margin:0}
+    nav{margin-top:.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+    nav a{color:#fff;text-decoration:none;font-weight:bold;position:relative}
     nav a:hover{text-decoration:underline}
+    nav .dropdown{position:relative}
+    nav .dropdown-content{display:none;position:absolute;background:#fff;color:#000;min-width:160px;box-shadow:0 2px 5px rgba(0,0,0,0.3);z-index:999}
+    nav .dropdown-content a{color:#000;display:block;padding:.5rem;text-align:right}
+    nav .dropdown-content a:hover{background:#f1f1f1}
+    nav .dropdown:hover .dropdown-content{display:block}
 
     #search-bar{display:flex;justify-content:center;margin:1rem}
-    #search-input{width:70%;padding:.5rem;border:1px solid #ccc;border-radius:5px}
+    #search-input{width:80%;max-width:500px;padding:.7rem;border:1px solid #ccc;border-radius:20px;text-align:right}
 
     .category{padding:1rem}
     .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
@@ -22,19 +28,36 @@
     .btn{background:#2e7d32;color:#fff;border:none;padding:.5rem 1rem;border-radius:5px;cursor:pointer;margin-top:.5rem}
     .btn:hover{background:#1b5e20}
 
-    footer{background:#2e7d32;color:#dfeede;text-align:center;padding:1rem;margin-top:2rem}
+    /* زر السلة والفاتورة */
+    .fixed-buttons{position:sticky;top:60px;background:#f8fdf8;display:flex;justify-content:center;gap:1rem;padding:.5rem;z-index:999}
+    .fixed-buttons button{background:#2e7d32;color:#fff;border:none;padding:.5rem 1rem;border-radius:20px;cursor:pointer}
+    .fixed-buttons button:hover{background:#1b5e20}
 
-    /* السلة */
-    #cart{background:#fff;border:2px solid #2e7d32;position:sticky;top:70px;margin:1rem;padding:1rem;border-radius:8px}
-    #cart h3{margin-top:0}
-    #cart table{width:100%;border-collapse:collapse}
-    #cart th,#cart td{border:1px solid #ddd;padding:.3rem;text-align:center}
-    #cart tfoot td{font-weight:bold}
+    /* مودال السلة */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:2000}
+    .modal-content{background:#fff;padding:1rem;border-radius:8px;width:90%;max-width:600px;max-height:90%;overflow:auto}
+    .modal-content h3{margin-top:0}
+    #cart-table{width:100%;border-collapse:collapse}
+    #cart-table th,#cart-table td{border:1px solid #ddd;padding:.3rem;text-align:center}
+    #cart-table input{width:50px}
+    #cart-table .remove{color:red;cursor:pointer}
     #checkout{margin-top:1rem}
     .form-group{margin:.5rem 0}
     .form-group input{width:100%;padding:.5rem;border:1px solid #ccc;border-radius:5px}
     .checkout-btns{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
     .checkout-btns button{flex:1}
+
+    /* سهم الرجوع للأعلى */
+    #back-to-top{position:fixed;bottom:20px;left:20px;background:#2e7d32;color:#fff;padding:.7rem;border-radius:50%;cursor:pointer;display:none;z-index:3000}
+    #back-to-top:hover{background:#1b5e20}
+
+    /* فوتر */
+    footer{background:#2e7d32;color:#dfeede;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:1rem;position:sticky;bottom:0}
+    footer h4{margin-bottom:.5rem;color:#fff}
+    footer a{color:#dfeede;text-decoration:none;display:block;margin:.2rem 0}
+    footer a:hover{text-decoration:underline}
+    .shop-btn{margin-top:.5rem;display:inline-block;background:#fff;color:#2e7d32;padding:.5rem 1rem;border-radius:20px;text-decoration:none;font-weight:bold}
+    .shop-btn:hover{background:#e0e0e0}
   </style>
 </head>
 <body>
@@ -42,32 +65,39 @@
 <header>
   <h1><i class="fas fa-seedling"></i> مشتلة السلام</h1>
   <nav>
-    <a href="#products">المنتجات</a>
-    <a href="#about">حولنا</a>
-    <a href="#contact">التواصل</a>
+    <div class="dropdown">
+      <a href="#products">🌱 منتجاتنا</a>
+      <div class="dropdown-content" id="categories-menu">
+        <a>جارٍ التحميل...</a>
+      </div>
+    </div>
+    <a href="#about">عن المشتلة</a>
+    <a href="#contact">تواصل معنا</a>
   </nav>
+  <div id="search-bar"><input type="text" id="search-input" placeholder="🔍 ابحث عن منتج..." oninput="filterProducts()"></div>
 </header>
 
-<!-- البحث -->
-<div id="search-bar">
-  <input type="text" id="search-input" placeholder="🔍 ابحث عن منتج..." oninput="filterProducts()">
+<!-- أزرار السلة والفاتورة -->
+<div class="fixed-buttons">
+  <button onclick="openCart()">🛒 السلة</button>
+  <button onclick="openCart()">🧾 الفاتورة</button>
 </div>
 
-<main style="display:flex;flex-wrap:wrap;align-items:flex-start">
-  <!-- المنتجات -->
-  <div id="categories-container" style="flex:3;min-width:60%">
-    <p style="text-align:center;padding:2rem;">⏳ جارٍ تحميل المنتجات...</p>
-  </div>
+<main id="categories-container">
+  <p style="text-align:center;padding:2rem;">⏳ جارٍ تحميل المنتجات...</p>
+</main>
 
-  <!-- السلة -->
-  <div id="cart" style="flex:1;min-width:35%">
+<!-- مودال السلة -->
+<div class="modal" id="cartModal">
+  <div class="modal-content">
     <h3><i class="fas fa-shopping-cart"></i> السلة</h3>
-    <table>
-      <thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th></tr></thead>
+    <table id="cart-table">
+      <thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>حذف</th></tr></thead>
       <tbody id="cart-body"></tbody>
-      <tfoot><tr><td colspan="2">المجموع</td><td id="cart-total">0</td></tr></tfoot>
+      <tfoot><tr><td colspan="2">المجموع</td><td id="cart-total">0</td><td></td></tr></tfoot>
     </table>
     <div id="checkout">
+      <h4>معلومات الزبون</h4>
       <div class="form-group"><input id="customerName" placeholder="👤 الاسم الكامل"></div>
       <div class="form-group"><input id="customerPhone" placeholder="📞 رقم الهاتف"></div>
       <div class="form-group"><input id="customerAddress" placeholder="📍 العنوان"></div>
@@ -76,11 +106,37 @@
         <button class="btn" onclick="checkout('google')">شراء عبر Google</button>
       </div>
     </div>
+    <button class="btn" style="margin-top:1rem;background:#c62828" onclick="closeCart()">إغلاق</button>
   </div>
-</main>
+</div>
+
+<!-- سهم للأعلى -->
+<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
 <footer>
-  <p>© 2025 مشتلة السلام — جميع الحقوق محفوظة</p>
+  <div>
+    <h4>مشتلة السلام</h4>
+    <p>أجود أنواع الشتلات والخدمات الزراعية</p>
+    <a href="https://maps.app.goo.gl/LUybQt4ZwNgbqhVz9" class="shop-btn">🚜 توجه إلى المشتل</a>
+  </div>
+  <div>
+    <h4>📍 العنوان</h4>
+    <p>حي السلام - الجزائر</p>
+    <h4>📞 الهاتف</h4>
+    <p>0697 743 721</p>
+  </div>
+  <div>
+    <h4>تابعنا</h4>
+    <a href="#"><i class="fab fa-facebook"></i> فيسبوك</a>
+    <a href="#"><i class="fab fa-instagram"></i> إنستغرام</a>
+    <a href="#"><i class="fab fa-whatsapp"></i> واتساب</a>
+  </div>
+  <div>
+    <h4>خدماتنا</h4>
+    <p>🌱 بيع الشتلات</p>
+    <p>🚚 التوصيل</p>
+    <p>🛠️ الاستشارات الزراعية</p>
+  </div>
 </footer>
 
 <script>
@@ -91,6 +147,7 @@ async function loadProducts(){
   const res=await fetch(API_URL+"?sheet=products");
   allProducts=await res.json();
   renderProducts(allProducts);
+  renderCategoriesMenu(allProducts);
 }
 
 function renderProducts(products){
@@ -121,9 +178,26 @@ function renderProducts(products){
   });
 }
 
+function renderCategoriesMenu(products){
+  const menu=document.getElementById("categories-menu");
+  menu.innerHTML="";
+  const cats=[...new Set(products.map(p=>(p["الفئة "]||"غير مصنف").trim()))];
+  cats.forEach(cat=>{
+    const a=document.createElement("a");
+    a.href="#";a.textContent=cat;
+    a.onclick=()=>filterByCategory(cat);
+    menu.appendChild(a);
+  });
+}
+
 function filterProducts(){
   const q=document.getElementById("search-input").value.trim();
   const results=allProducts.filter(p=>p["اسم المنتج"].includes(q)||p["الفئة "].includes(q));
+  renderProducts(results);
+}
+
+function filterByCategory(cat){
+  const results=allProducts.filter(p=>(p["الفئة "]||"").trim()===cat);
   renderProducts(results);
 }
 
@@ -141,8 +215,9 @@ function renderCart(){
     total+=item.price*item.qty;
     const tr=document.createElement("tr");
     tr.innerHTML=`<td>${item.name}</td>
-      <td><input type="number" value="${item.qty}" min="1" style="width:50px" onchange="updateQty(${item.id},this.value)"></td>
-      <td>${item.price*item.qty}</td>`;
+      <td><input type="number" value="${item.qty}" min="1" onchange="updateQty(${item.id},this.value)"></td>
+      <td>${item.price*item.qty}</td>
+      <td><span class="remove" onclick="removeFromCart(${item.id})">❌</span></td>`;
     body.appendChild(tr);
   });
   document.getElementById("cart-total").innerText=total;
@@ -153,39 +228,32 @@ function updateQty(id,val){
   if(it){it.qty=parseInt(val)||1;}
   renderCart();
 }
+function removeFromCart(id){
+  cart=cart.filter(i=>i.id!==id);
+  renderCart();
+}
+
+function openCart(){document.getElementById("cartModal").style.display="flex";}
+function closeCart(){document.getElementById("cartModal").style.display="none";}
 
 function checkout(method){
   const name=document.getElementById("customerName").value.trim();
   const phone=document.getElementById("customerPhone").value.trim();
   const address=document.getElementById("customerAddress").value.trim();
   if(!name||!phone||cart.length===0){alert("⚠️ أدخل البيانات وأضف منتجات");return;}
-
   const itemsStr=cart.map(i=>`${i.name} x${i.qty}`).join(", ");
   const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
 
-  // إرسال إلى Google Sheets
-  fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"addOrder",
-      customerName:name,
-      phone:phone,
-      customerAddress:address,
-      items:itemsStr,
-      total:total,
-      status:"جديد"
-    })
-  });
+  fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addOrder",customerName:name,phone,customerAddress:address,items:itemsStr,total:total,status:"جديد"})});
 
   if(method==="whatsapp"){
     const msg=`طلب جديد:%0A👤 ${name}%0A📞 ${phone}%0A📍 ${address}%0A🛒 ${itemsStr}%0A💰 ${total} دج`;
     window.open(`https://wa.me/213697743721?text=${msg}`,"_blank");
-  }else{
-    alert("✅ تم إرسال الطلب إلى المشتلة بنجاح!");
-  }
-  cart=[];renderCart();
+  }else{alert("✅ تم إرسال الطلب إلى المشتلة بنجاح!");}
+  cart=[];renderCart();closeCart();
 }
 
+window.onscroll=()=>{document.getElementById("back-to-top").style.display=window.scrollY>200?"block":"none";}
 loadProducts();
 </script>
 
