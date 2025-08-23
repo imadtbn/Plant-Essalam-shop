@@ -7,13 +7,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body{font-family:'Tajawal',Arial,sans-serif;margin:0;background:#f9fff9;scroll-behavior:smooth}
-    header{background:#2e7d32;color:#fff;padding:1rem;position:sticky;top:0;z-index:1000}
+
+    /* الهيدر مثبت */
+    header {
+      background:#2e7d32;
+      color:#fff;
+      padding:1rem;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1200;
+    }
     header h1{margin:0}
     nav{margin-top:.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
     nav a{color:#fff;text-decoration:none;font-weight:bold}
     nav a:hover{text-decoration:underline}
     nav .dropdown{position:relative}
-    nav .dropdown-content{display:none;position:absolute;background:#fff;color:#000;min-width:160px;box-shadow:0 2px 5px rgba(0,0,0,0.3);z-index:999}
+    nav .dropdown-content{display:none;position:absolute;background:#fff;color:#000;min-width:160px;box-shadow:0 2px 5px rgba(0,0,0,0.3);z-index:1500}
     nav .dropdown-content a{color:#000;display:block;padding:.5rem;text-align:right}
     nav .dropdown-content a:hover{background:#f1f1f1}
     nav .dropdown:hover .dropdown-content{display:block}
@@ -23,26 +33,43 @@
     #search-input{width:80%;max-width:500px;padding:.7rem 2.5rem .7rem .7rem;border:1px solid #ccc;border-radius:20px;text-align:right}
     #search-bar i{position:absolute;right:calc(10% + 15px);top:50%;transform:translateY(-50%);color:#888}
 
-    /* زر السلة */
-    .cart-header{display:flex;justify-content:center;margin-bottom:1rem}
-    .cart-btn{background:#2e7d32;color:#fff;padding:1rem 2rem;border:none;border-radius:30px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;gap:.7rem}
-    .cart-btn:hover{background:#1b5e20}
+    /* زر السلة العائم */
+    .floating-cart {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background:#2e7d32;
+      color:#fff;
+      border:none;
+      border-radius:50%;
+      width:60px;
+      height:60px;
+      font-size:1.5rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      box-shadow:0 4px 8px rgba(0,0,0,0.3);
+      z-index:1600;
+    }
+    .floating-cart:hover{background:#1b5e20}
 
-    /* شريط السلة */
-.cart-bar {
-  background:#e8f5e9;
-  padding:.7rem 1rem;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:bold;
-  position:sticky;
-  top:80px; /* يظهر أسفل الهيدر */
-  z-index:1200;
-  border:1px solid #c8e6c9;
-  border-radius:8px;
-  margin:0 1rem;
-}
+    /* شريط الفاتورة مثبت أسفل الهيدر */
+    .cart-bar {
+      background:#e8f5e9;
+      padding:.7rem 1rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:bold;
+      position: fixed;
+      top: 100px; /* أسفل الهيدر */
+      left: 0;
+      right: 0;
+      z-index:1100;
+      border:1px solid #c8e6c9;
+      border-radius:0;
+    }
     .cart-bar button{background:#2e7d32;color:#fff;border:none;padding:.5rem 1rem;border-radius:15px;cursor:pointer}
     .cart-bar button:hover{background:#1b5e20}
 
@@ -81,13 +108,30 @@
     #back-to-top{position:fixed;bottom:20px;left:20px;background:#2e7d32;color:#fff;padding:.7rem;border-radius:50%;cursor:pointer;display:none;z-index:3000}
     #back-to-top:hover{background:#1b5e20}
 
-    /* فوتر */
-    footer{background:#2e7d32;color:#dfeede;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:1rem;text-align:right;margin-top:2rem}
+    /* فوتر مثبت */
+    footer{
+      background:#2e7d32;
+      color:#dfeede;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:1rem;
+      padding:1rem;
+      text-align:right;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index:1000;
+    }
     footer h4{margin-bottom:.5rem;color:#fff}
     footer a{color:#dfeede;text-decoration:none;display:block;margin:.2rem 0}
     footer a:hover{text-decoration:underline}
     .shop-btn{margin-top:.5rem;display:inline-block;background:#fff;color:#2e7d32;padding:.5rem 1rem;border-radius:20px;text-decoration:none;font-weight:bold}
     .shop-btn:hover{background:#e0e0e0}
+
+    /* المسافات للمحتوى */
+    main {
+      padding: 180px 20px 140px; /* مسافة كافية بين الهيدر والفوتر */
+    }
   </style>
 </head>
 <body>
@@ -106,12 +150,9 @@
     <input type="text" id="search-input" placeholder="ابحث عن منتج..." oninput="filterProducts()">
     <i class="fas fa-search"></i>
   </div>
-  <div class="cart-header">
-    <button class="cart-btn" onclick="openCart()"><i class="fas fa-shopping-cart"></i> السلة</button>
-  </div>
 </header>
 
-<!-- شريط السلة -->
+<!-- شريط الفاتورة مثبت تحت الهيدر -->
 <div class="cart-bar">
   <span>🛒 العناصر: <span id="cart-count">0</span> | 💰 المجموع: <span id="cart-sum">0</span> دج</span>
   <button onclick="openCart()">عرض الفاتورة</button>
@@ -120,6 +161,11 @@
 <main id="categories-container">
   <p style="text-align:center;padding:2rem;">⏳ جارٍ تحميل المنتجات...</p>
 </main>
+
+<!-- زر عائم للسلة -->
+<button class="floating-cart" onclick="openCart()">
+  <i class="fas fa-shopping-cart"></i>
+</button>
 
 <!-- مودال السلة -->
 <div class="modal" id="cartModal">
@@ -291,8 +337,12 @@ function checkout(method){
   if(method==="whatsapp"){
     const msg=`طلب جديد:%0A👤 ${name}%0A📞 ${phone}%0A📍 ${address}%0A🛒 ${itemsStr}%0A💰 ${total} دج`;
     window.open(`https://wa.me/213697743721?text=${msg}`,"_blank");
-  }else{alert("✅ تم إرسال الطلب إلى المشتلة بنجاح!");}
-  cart=[];renderCart();closeCart();
+  }else{
+    alert("✅ تم إرسال الطلب إلى المشتلة بنجاح!");
+  }
+  cart=[];
+  renderCart();
+  closeCart();
 }
 
 function showToast(msg){
@@ -302,7 +352,10 @@ function showToast(msg){
   setTimeout(()=>toast.className=toast.className.replace("show",""),3000);
 }
 
-window.onscroll=()=>{document.getElementById("back-to-top").style.display=window.scrollY>200?"block":"none";}
+window.onscroll=()=>{
+  document.getElementById("back-to-top").style.display = window.scrollY>200 ? "block" : "none";
+}
+
 loadProducts();
 </script>
 
