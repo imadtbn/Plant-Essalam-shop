@@ -7,17 +7,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body{font-family:'Tajawal',Arial,sans-serif;margin:0;background:#f9fff9;scroll-behavior:smooth}
-
-    /* الهيدر مثبت */
-    header{
-      background:#2e7d32;color:#fff;padding:1rem;position:fixed;top:0;width:100%;z-index:1200
-    }
+    header{background:#2e7d32;color:#fff;padding:1rem;position:sticky;top:0;z-index:1000}
     header h1{margin:0}
     nav{margin-top:.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
     nav a{color:#fff;text-decoration:none;font-weight:bold}
     nav a:hover{text-decoration:underline}
     nav .dropdown{position:relative}
-    nav .dropdown-content{display:none;position:absolute;background:#fff;color:#000;min-width:160px;box-shadow:0 2px 5px rgba(0,0,0,0.3);z-index:1500}
+    nav .dropdown-content{display:none;position:absolute;background:#fff;color:#000;min-width:160px;box-shadow:0 2px 5px rgba(0,0,0,0.3);z-index:999}
     nav .dropdown-content a{color:#000;display:block;padding:.5rem;text-align:right}
     nav .dropdown-content a:hover{background:#f1f1f1}
     nav .dropdown:hover .dropdown-content{display:block}
@@ -27,26 +23,28 @@
     #search-input{width:80%;max-width:500px;padding:.7rem 2.5rem .7rem .7rem;border:1px solid #ccc;border-radius:20px;text-align:right}
     #search-bar i{position:absolute;right:calc(10% + 15px);top:50%;transform:translateY(-50%);color:#888}
 
-    /* زر كبير للسلة داخل الهيدر (إبقاء على الإعداد القديم) */
+    /* زر السلة */
     .cart-header{display:flex;justify-content:center;margin-bottom:1rem}
     .cart-btn{background:#2e7d32;color:#fff;padding:1rem 2rem;border:none;border-radius:30px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;gap:.7rem}
     .cart-btn:hover{background:#1b5e20}
 
-    /* شريط الفاتورة ثابت أسفل الهيدر */
-    .cart-bar{
-      background:#e8f5e9;padding:.7rem 1rem;display:flex;justify-content:space-between;align-items:center;font-weight:bold;
-      position:fixed;top:100px;left:0;right:0;z-index:1100;border:1px solid #c8e6c9;border-radius:0
+    /* شريط السلة */
+    .cart-bar {
+      background:#e8f5e9;
+      padding:.7rem 1rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:bold;
+      position:sticky;
+      top:80px; /* يظهر أسفل الهيدر */
+      z-index:1200;
+      border:1px solid #c8e6c9;
+      border-radius:8px;
+      margin:0 1rem;
     }
     .cart-bar button{background:#2e7d32;color:#fff;border:none;padding:.5rem 1rem;border-radius:15px;cursor:pointer}
     .cart-bar button:hover{background:#1b5e20}
-
-    /* زر السلة العائم */
-    .floating-cart{
-      position:fixed;bottom:80px;right:20px;background:#2e7d32;color:#fff;border:none;border-radius:50%;
-      width:60px;height:60px;font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;
-      box-shadow:0 4px 8px rgba(0,0,0,0.3);z-index:1600
-    }
-    .floating-cart:hover{background:#1b5e20}
 
     /* المنتجات */
     .category{padding:1rem}
@@ -79,23 +77,33 @@
     @keyframes fadein{from{bottom:0;opacity:0}to{bottom:30px;opacity:1}}
     @keyframes fadeout{from{bottom:30px;opacity:1}to{bottom:0;opacity:0}}
 
-    /* سهم للأعلى */
-    #back-to-top{position:fixed;bottom:20px;left:20px;background:#2e7d32;color:#fff;padding:.7rem;border-radius:50%;cursor:pointer;display:none;z-index:3000}
-    #back-to-top:hover{background:#1b5e20}
-
-    /* الفوتر مثبت */
-    footer{
-      background:#2e7d32;color:#dfeede;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:1rem;padding:1rem;text-align:right;position:fixed;bottom:0;width:100%;z-index:1000
+    /* زر السلة العائم */
+    #floating-cart-btn {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 2000;
     }
+    #floating-cart-btn:hover { background: #1b5e20; }
+
+    /* فوتر */
+    footer{background:#2e7d32;color:#dfeede;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;padding:1rem;text-align:right;margin-top:2rem;position:relative;clear:both;}
     footer h4{margin-bottom:.5rem;color:#fff}
     footer a{color:#dfeede;text-decoration:none;display:block;margin:.2rem 0}
     footer a:hover{text-decoration:underline}
-    .shop-btn{margin-top:.5rem;display:inline-block;background:#fff;color:#2e7د32;padding:.5rem 1rem;border-radius:20px;text-decoration:none;font-weight:bold}
+    .shop-btn{margin-top:.5rem;display:inline-block;background:#fff;color:#2e7d32;padding:.5rem 1rem;border-radius:20px;text-decoration:none;font-weight:bold}
     .shop-btn:hover{background:#e0e0e0}
-
-    /* مسافات المحتوى (سيتم ضبطها ديناميكيًا أيضًا من JS) */
-    main{padding:200px 20px 140px}
   </style>
 </head>
 <body>
@@ -114,13 +122,12 @@
     <input type="text" id="search-input" placeholder="ابحث عن منتج..." oninput="filterProducts()">
     <i class="fas fa-search"></i>
   </div>
-  <!-- زر السلة القديم داخل الهيدر (إبقاءًا على الإعدادات) -->
   <div class="cart-header">
     <button class="cart-btn" onclick="openCart()"><i class="fas fa-shopping-cart"></i> السلة</button>
   </div>
 </header>
 
-<!-- شريط الفاتورة المثبت تحت الهيدر -->
+<!-- شريط السلة -->
 <div class="cart-bar">
   <span>🛒 العناصر: <span id="cart-count">0</span> | 💰 المجموع: <span id="cart-sum">0</span> دج</span>
   <button onclick="openCart()">عرض الفاتورة</button>
@@ -130,13 +137,8 @@
   <p style="text-align:center;padding:2rem;">⏳ جارٍ تحميل المنتجات...</p>
 </main>
 
-<!-- زر عائم للسلة -->
-<button class="floating-cart" onclick="openCart()" aria-label="فتح السلة">
-  <i class="fas fa-shopping-cart"></i>
-</button>
-
 <!-- مودال السلة -->
-<div class="modal" id="cartModal" role="dialog" aria-modal="true">
+<div class="modal" id="cartModal">
   <div class="modal-content">
     <div class="modal-header">
       <h3><i class="fas fa-shopping-cart"></i> السلة</h3>
@@ -162,6 +164,9 @@
     </div>
   </div>
 </div>
+
+<!-- زر السلة العائم -->
+<button id="floating-cart-btn" onclick="openCart()"><i class="fas fa-shopping-cart"></i></button>
 
 <!-- Toast -->
 <div id="toast"></div>
@@ -196,44 +201,16 @@
 </footer>
 
 <script>
-/* ---- الإعدادات والبيانات ---- */
 const API_URL="https://script.google.com/macros/s/AKfycbxMYSinB7TRS-wtpunBOT9Telb6pKAMvuRTWfc12elRnvcwsO0VUT1s0arOfG-S9-vPHA/exec";
 let allProducts=[],cart=[];
 
-/* ---- ضبط تموضع العناصر المثبتة ديناميكياً ---- */
-function applyFixedLayout(){
-  const header=document.querySelector('header');
-  const cartBar=document.querySelector('.cart-bar');
-  const footer=document.querySelector('footer');
-  const main=document.querySelector('main');
-
-  const headerH=header.offsetHeight;     // ارتفاع الهيدر الفعلي
-  cartBar.style.top = headerH + 'px';     // شريط الفاتورة تحت الهيدر مباشرة
-  const cartBarH=cartBar.offsetHeight;
-
-  // مسافات المحتوى لتفادي التداخل
-  main.style.paddingTop = (headerH + cartBarH + 20) + 'px';
-  main.style.paddingBottom = (footer.offsetHeight + 20) + 'px';
-}
-window.addEventListener('load', applyFixedLayout);
-window.addEventListener('resize', applyFixedLayout);
-
-/* ---- تحميل المنتجات ---- */
 async function loadProducts(){
-  try{
-    const res=await fetch(API_URL+"?sheet=products");
-    allProducts=await res.json();
-    renderProducts(allProducts);
-    renderCategoriesMenu(allProducts);
-  }catch(e){
-    document.getElementById("categories-container").innerHTML =
-      '<p style="text-align:center;color:#b00020;padding:2rem;">تعذّر تحميل المنتجات. حاول لاحقًا.</p>';
-  }finally{
-    applyFixedLayout(); // تأكد من حساب الارتفاعات بعد التحميل
-  }
+  const res=await fetch(API_URL+"?sheet=products");
+  allProducts=await res.json();
+  renderProducts(allProducts);
+  renderCategoriesMenu(allProducts);
 }
 
-/* ---- عرض المنتجات بحسب الفئات ---- */
 function renderProducts(products){
   const container=document.getElementById("categories-container");
   container.innerHTML="";
@@ -251,9 +228,9 @@ function renderProducts(products){
       const card=document.createElement("div");
       card.className="card";
       card.innerHTML=`
-        <img src="${p["رابط الصورة"]||'https://via.placeholder.com/200x150'}" alt="${p["اسم المنتج"]||'منتج'}">
-        <h3>${p["اسم المنتج"]||''}</h3>
-        <p>${p["السعر "]||0} دج</p>
+        <img src="${p["رابط الصورة"]||'https://via.placeholder.com/200x150'}">
+        <h3>${p["اسم المنتج"]}</h3>
+        <p>${p["السعر "]} دج</p>
         <button class="btn"><i class="fas fa-cart-plus"></i> إضافة للسلة</button>`;
       card.querySelector("button").onclick=()=>addToCart(p);
       wrap.appendChild(card);
@@ -262,7 +239,6 @@ function renderProducts(products){
   });
 }
 
-/* ---- قائمة الفئات في القائمة المنسدلة ---- */
 function renderCategoriesMenu(products){
   const menu=document.getElementById("categories-menu");
   menu.innerHTML="";
@@ -270,15 +246,14 @@ function renderCategoriesMenu(products){
   cats.forEach(cat=>{
     const a=document.createElement("a");
     a.href="#";a.textContent=cat;
-    a.onclick=(e)=>{e.preventDefault();filterByCategory(cat);};
+    a.onclick=()=>filterByCategory(cat);
     menu.appendChild(a);
   });
 }
 
-/* ---- البحث والتصفية ---- */
 function filterProducts(){
   const q=document.getElementById("search-input").value.trim();
-  const results=allProducts.filter(p=>(p["اسم المنتج"]||"").includes(q)||(p["الفئة "]||"").includes(q));
+  const results=allProducts.filter(p=>p["اسم المنتج"].includes(q)||p["الفئة "].includes(q));
   renderProducts(results);
 }
 function filterByCategory(cat){
@@ -286,23 +261,23 @@ function filterByCategory(cat){
   renderProducts(results);
 }
 
-/* ---- السلة ---- */
 function addToCart(product){
   const existing=cart.find(i=>i.id===product.id);
   if(existing){existing.qty++;}
-  else{cart.push({id:product.id,name:product["اسم المنتج"],price:Number(product["السعر "])||0,qty:1});}
+  else{cart.push({id:product.id,name:product["اسم المنتج"],price:product["السعر "],qty:1});}
   renderCart();
   showToast(`✅ تم إضافة ${product["اسم المنتج"]} للسلة`);
 }
+
 function renderCart(){
   const body=document.getElementById("cart-body");body.innerHTML="";
   let total=0,count=0;
   cart.forEach(item=>{
-    const line=item.price*item.qty; total+=line; count+=item.qty;
+    total+=item.price*item.qty;count+=item.qty;
     const tr=document.createElement("tr");
     tr.innerHTML=`<td>${item.name}</td>
       <td><input type="number" value="${item.qty}" min="1" onchange="updateQty(${item.id},this.value)"></td>
-      <td>${line}</td>
+      <td>${item.price*item.qty}</td>
       <td><span class="remove" onclick="removeFromCart(${item.id})"><i class="fas fa-times-circle"></i></span></td>`;
     body.appendChild(tr);
   });
@@ -310,9 +285,10 @@ function renderCart(){
   document.getElementById("cart-count").innerText=count;
   document.getElementById("cart-sum").innerText=total;
 }
+
 function updateQty(id,val){
   const it=cart.find(i=>i.id===id);
-  if(it){it.qty=Math.max(1,parseInt(val)||1);}
+  if(it){it.qty=parseInt(val)||1;}
   renderCart();
 }
 function removeFromCart(id){cart=cart.filter(i=>i.id!==id);renderCart();}
@@ -321,7 +297,6 @@ function clearCart(){cart=[];renderCart();}
 function openCart(){document.getElementById("cartModal").style.display="flex";}
 function closeCart(){document.getElementById("cartModal").style.display="none";}
 
-/* ---- إنهاء الطلب ---- */
 function checkout(method){
   const name=document.getElementById("customerName").value.trim();
   const phone=document.getElementById("customerPhone").value.trim();
@@ -330,20 +305,15 @@ function checkout(method){
   const itemsStr=cart.map(i=>`${i.name} x${i.qty}`).join(", ");
   const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
 
-  // إرسال الطلب إلى Google Sheets
-  fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addOrder",customerName:name,phone,customerAddress:address,items:itemsStr,total:total,status:"جديد"})})
-    .catch(()=>{});
+  fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addOrder",customerName:name,phone,customerAddress:address,items:itemsStr,total:total,status:"جديد"})});
 
   if(method==="whatsapp"){
     const msg=`طلب جديد:%0A👤 ${name}%0A📞 ${phone}%0A📍 ${address}%0A🛒 ${itemsStr}%0A💰 ${total} دج`;
     window.open(`https://wa.me/213697743721?text=${msg}`,"_blank");
-  }else{
-    alert("✅ تم إرسال الطلب إلى المشتلة بنجاح!");
-  }
+  }else{alert("✅ تم إرسال الطلب إلى المشتلة بنجاح!");}
   cart=[];renderCart();closeCart();
 }
 
-/* ---- إشعار صغير ---- */
 function showToast(msg){
   const toast=document.getElementById("toast");
   toast.innerText=msg;
@@ -351,12 +321,7 @@ function showToast(msg){
   setTimeout(()=>toast.className=toast.className.replace("show",""),3000);
 }
 
-/* ---- زر العودة للأعلى ---- */
-window.onscroll=()=>{
-  document.getElementById("back-to-top").style.display=window.scrollY>200?"block":"none";
-};
-
-/* ---- بدء التحميل ---- */
+window.onscroll=()=>{document.getElementById("back-to-top").style.display=window.scrollY>200?"block":"none";}
 loadProducts();
 </script>
 
