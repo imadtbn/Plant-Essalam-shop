@@ -109,9 +109,6 @@
     <input type="text" id="search-input" placeholder="ابحث عن منتج..." oninput="filterProducts()">
     <i class="fas fa-search"></i>
   </div>
-  <div class="cart-header">
-    <button class="cart-btn" onclick="openCart()"><i class="fas fa-shopping-cart"></i> السلة</button>
-  </div>
 </header>
 
 <!-- عداد السلة -->
@@ -186,7 +183,7 @@
 
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbxMYSinB7TRS-wtpunBOT9Telb6pKAMvuRTWfc12elRnvcwsO0VUT1s0arOfG-S9-vPHA/exec";
-let allProducts=[],cart=[];
+let allProducts=[], cart=[];
 
 async function loadProducts(){
   const res=await fetch(API_URL+"?sheet=products");
