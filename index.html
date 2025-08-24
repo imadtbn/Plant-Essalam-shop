@@ -30,6 +30,9 @@
       scroll-behavior: smooth;
       color: var(--text-dark);
       line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     
     /* تحسين الهيدر */
@@ -219,6 +222,7 @@
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 1rem 3rem;
+      flex: 1;
     }
     
     .category {
@@ -574,7 +578,7 @@
       transform: translateY(-3px);
     }
     
-    /* تحسين الفوتر - 3 أقسام */
+    /* تحسين الفوتر - 3 أقسام في سطر واحد */
     footer {
       background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
       color: #fff;
@@ -583,19 +587,24 @@
       gap: 2rem;
       padding: 3rem 2rem;
       text-align: center;
-      margin-top: 3rem;
+      margin-top: auto;
     }
     
     .footer-section {
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 0 1rem;
+    }
+    
+    .footer-section:not(:last-child) {
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     footer h4 {
       margin-bottom: 1rem;
       color: #fff;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -619,6 +628,19 @@
       padding-right: 5px;
     }
     
+    .footer-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.3rem 0;
+    }
+    
     .shop-btn {
       margin-top: 1rem;
       display: inline-flex;
@@ -639,6 +661,25 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     
+    .social-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin-top: 1rem;
+    }
+    
+    .social-links a {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.3s;
+    }
+    
+    .social-links a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-5px);
+    }
+    
     .copyright {
       grid-column: 1 / -1;
       text-align: center;
@@ -652,7 +693,14 @@
     /* تصميم متجاوب */
     @media (max-width: 992px) {
       footer {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .footer-section:not(:last-child) {
+        border-left: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 1.5rem;
       }
     }
     
@@ -692,12 +740,7 @@
       }
       
       footer {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-      
-      footer h4, footer a {
-        justify-content: center;
+        padding: 2rem 1rem;
       }
       
       .floating-cart {
@@ -811,290 +854,23 @@
 <footer>
   <div class="footer-section">
     <h4><i class="fas fa-store"></i> مشتلة السلام</h4>
-    <p>أجود أنواع الشتلات والخدمات الزراعية</p>
-    <a href="#" class="shop-btn"><i class="fas fa-map-marker-alt"></i> توجه إلى المشتل</a>
+    <p>أجود أنواع الشتلات والخدمات الزراعية بجودة عالية وأسعار مناسبة</p>
+    <a href="#" class="shop-btn"><i class="fas fa-map-marker-alt"></i> زيارتنا في المشتل</a>
   </div>
   
   <div class="footer-section">
-    <h4><i class="fas fa-map-marker-alt"></i> العنوان</h4>
-    <p>حي السلام - الجزائر</p>
-    <h4><i class="fas fa-phone"></i> الهاتف</h4>
-    <p>0697 743 721</p>
-  </div>
-  
-  <div class="footer-section">
-    <h4><i class="fas fa-share-alt"></i> تابعنا</h4>
-    <a href="#"><i class="fab fa-facebook"></i> فيسبوك</a>
-    <a href="#"><i class="fab fa-instagram"></i> إنستغرام</a>
-    <a href="#"><i class="fab fa-whatsapp"></i> واتساب</a>
-  </div>
-  
-  <div class="copyright">
-    <p>جميع الحقوق محفوظة &copy; 2023 مشتلة السلام</p>
-  </div>
-</footer>
-
-<script>
-const API_URL="https://script.google.com/macros/s/AKfycbxMYSinB7TRS-wtpunBOT9Telb6pKAMvuRTWfc12elRnvcwsO0VUT1s0arOfG-S9-vPHA/exec";
-let allProducts=[],cart=[];
-
-async function loadProducts(){
-  try {
-    const res=await fetch(API_URL+"?sheet=products");
-    allProducts=await res.json();
-    renderProducts(allProducts);
-    renderCategoriesTabs(allProducts);
-  } catch (error) {
-    document.getElementById("categories-container").innerHTML = `
-      <div style="text-align:center; padding:3rem; color:#d32f2f;">
-        <i class="fas fa-exclamation-triangle" style="font-size:3rem; margin-bottom:1rem;"></i>
-        <h2>حدث خطأ في تحميل المنتجات</h2>
-        <p>الرجاء المحاولة مرة أخرى لاحقاً</p>
-        <button class="btn" onclick="loadProducts()"><i class="fas fa-redo"></i> إعادة المحاولة</button>
+    <h4><i class="fas fa-address-card"></i> معلومات الاتصال</h4>
+    <div class="footer-contact">
+      <div class="contact-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>حي السلام - الجزائر</span>
       </div>
-    `;
-  }
-}
-
-function renderProducts(products){
-  const container=document.getElementById("categories-container");
-  if(products.length === 0) {
-    container.innerHTML=`
-      <div style="text-align:center; padding:3rem;">
-        <i class="fas fa-search" style="font-size:3rem; color:#ccc; margin-bottom:1rem;"></i>
-        <h2 style="color:#666;">لا توجد منتجات</h2>
-        <p>لم يتم العثور على منتجات تطابق معايير البحث</p>
+      <div class="contact-item">
+        <i class="fas fa-phone"></i>
+        <span>0697 743 721</span>
       </div>
-    `;
-    return;
-  }
-  
-  container.innerHTML="";
-  const grouped={};
-  products.forEach(p=>{
-    const cat=(p["الفئة "]||"غير مصنف").trim();
-    (grouped[cat] ||= []).push(p);
-  });
-  
-  Object.entries(grouped).forEach(([cat,items])=>{
-    const section=document.createElement("section");
-    section.className="category";
-    section.id="cat-"+cat.replace(/\s+/g, '-');
-    section.innerHTML=`
-      <div class="category-header">
-        <h2><i class="fas fa-leaf"></i> ${cat}</h2>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <span>info@alsalam-nursery.com</span>
       </div>
-      <div class="products"></div>
-    `;
-    const wrap=section.querySelector(".products");
-    items.forEach(p=>{
-      const card=document.createElement("div");
-      card.className="card";
-      card.innerHTML=`
-        <img src="${p["رابط الصورة"]||'https://via.placeholder.com/300x200?text=صورة+المنتج'}" alt="${p["اسم المنتج"]}">
-        <h3>${p["اسم المنتج"]}</h3>
-        <p>${p["السعر "]} دج</p>
-        <button class="btn"><i class="fas fa-cart-plus"></i> إضافة للسلة</button>
-      `;
-      card.querySelector("button").onclick=()=>addToCart(p);
-      wrap.appendChild(card);
-    });
-    container.appendChild(section);
-  });
-}
-
-function renderCategoriesTabs(products){
-  const tabsContainer=document.getElementById("categories-tabs");
-  tabsContainer.innerHTML="";
-  
-  // إضافة تبويب "الكل"
-  const allTab=document.createElement("div");
-  allTab.className="tab active";
-  allTab.textContent="الكل";
-  allTab.onclick=()=>{
-    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-    allTab.classList.add("active");
-    renderProducts(allProducts);
-  };
-  tabsContainer.appendChild(allTab);
-  
-  // إضافة تبويبات لكل فئة
-  const cats=[...new Set(products.map(p=>(p["الفئة "]||"غير مصنف").trim()))];
-  cats.forEach(cat=>{
-    const tab=document.createElement("div");
-    tab.className="tab";
-    tab.textContent=cat;
-    tab.onclick=()=>{
-      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-      tab.classList.add("active");
-      filterByCategory(cat);
-    };
-    tabsContainer.appendChild(tab);
-  });
-}
-
-function filterProducts(){
-  const q=document.getElementById("search-input").value.trim().toLowerCase();
-  const results=allProducts.filter(p=>
-    p["اسم المنتج"].toLowerCase().includes(q) || 
-    (p["الفئة "] && p["الفئة "].toLowerCase().includes(q))
-  );
-  renderProducts(results);
-}
-
-function filterByCategory(cat){
-  const results=allProducts.filter(p=>(p["الفئة "]||"").trim()===cat);
-  renderProducts(results);
-}
-
-function addToCart(product){
-  const existing=cart.find(i=>i.id===product.id);
-  if(existing){
-    existing.qty++;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product["اسم المنتج"],
-      price: parseFloat(product["السعر "]) || 0,
-      qty: 1
-    });
-  }
-  renderCart();
-  showToast(`✅ تم إضافة "${product["اسم المنتج"]}" إلى السلة`);
-}
-
-function renderCart(){
-  const body=document.getElementById("cart-body");
-  body.innerHTML="";
-  let total=0, count=0;
-  
-  cart.forEach(item=>{
-    const itemTotal = item.price * item.qty;
-    total += itemTotal;
-    count += item.qty;
     
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${item.name}</td>
-      <td><input type="number" value="${item.qty}" min="1" onchange="updateQty(${item.id},this.value)"></td>
-      <td>${itemTotal} دج</td>
-      <td><span class="remove" onclick="removeFromCart(${item.id})"><i class="fas fa-times-circle"></i></span></td>
-    `;
-    body.appendChild(tr);
-  });
-  
-  document.getElementById("cart-total").textContent = total + " دج";
-  document.getElementById("cart-count").textContent = count;
-  document.getElementById("cart-sum").textContent = total;
-  document.getElementById("floating-cart-count").textContent = count;
-}
-
-function updateQty(id,val){
-  const it=cart.find(i=>i.id===id);
-  if(it){
-    it.qty=parseInt(val)||1;
-    if(it.qty < 1) it.qty = 1;
-  }
-  renderCart();
-}
-
-function removeFromCart(id){
-  const item = cart.find(i=>i.id===id);
-  if(item) {
-    cart=cart.filter(i=>i.id!==id);
-    showToast(`🗑️ تم إزالة "${item.name}" من السلة`);
-  }
-  renderCart();
-}
-
-function clearCart(){
-  if(cart.length > 0) {
-    showToast("🗑️ تم إفراغ السلة");
-    cart=[];
-    renderCart();
-  }
-}
-
-function openCart(){
-  document.getElementById("cartModal").style.display="flex";
-}
-
-function closeCart(){
-  document.getElementById("cartModal").style.display="none";
-}
-
-function checkout(method){
-  const name=document.getElementById("customerName").value.trim();
-  const phone=document.getElementById("customerPhone").value.trim();
-  const address=document.getElementById("customerAddress").value.trim();
-  
-  if(!name){
-    showToast("⚠️ يرجى إدخال الاسم الكامل");
-    document.getElementById("customerName").focus();
-    return;
-  }
-  
-  if(!phone){
-    showToast("⚠️ يرجى إدخال رقم اله電話ف");
-    document.getElementById("customerPhone").focus();
-    return;
-  }
-  
-  if(cart.length===0){
-    showToast("⚠️ السلة فارغة، أضف منتجات أولاً");
-    return;
-  }
-  
-  const itemsStr=cart.map(i=>`${i.name} x${i.qty}`).join(", ");
-  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  
-  // إرسال الطلب إلى Google Sheets
-  fetch(API_URL,{
-    method: "POST",
-    body: JSON.stringify({
-      action: "addOrder",
-      customerName: name,
-      phone: phone,
-      customerAddress: address,
-      items: itemsStr,
-      total: total,
-      status: "جديد",
-      date: new Date().toLocaleString('ar-EG')
-    })
-  }).catch(err => console.error("Error sending to Google Sheets:", err));
-  
-  if(method==="whatsapp"){
-    const msg=`طلب جديد من متجر مشتلة السلام:%0A%0A👤 الاسم: ${name}%0A📞 الهاتف: ${phone}%0A📍 العنوان: ${address}%0A%0A🛒 المنتجات:%0A${cart.map(i=>`- ${i.name} (${i.qty} x ${i.price} دج)`).join('%0A')}%0A%0A💰 المجموع: ${total} دج%0A%0A📅 ${new Date().toLocaleString('ar-EG')}`;
-    window.open(`https://wa.me/213697743721?text=${msg}`,"_blank");
-  } else {
-    showToast("✅ تم إرسال الطلب إلى المشتلة بنجاح!");
-  }
-  
-  cart=[];
-  renderCart();
-  closeCart();
-  
-  // مسح حقول الزبون
-  document.getElementById("customerName").value = "";
-  document.getElementById("customerPhone").value = "";
-  document.getElementById("customerAddress").value = "";
-}
-
-function showToast(msg){
-  const toast=document.getElementById("toast");
-  toast.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`;
-  toast.className="show";
-  setTimeout(()=>toast.className=toast.className.replace("show",""),3000);
-}
-
-// التمرير للأعلى
-window.onscroll=function(){
-  document.getElementById("back-to-top").style.display=window.scrollY>200?"flex":"none";
-};
-
-// تحميل المنتجات عند بدء الصفحة
-loadProducts();
-</script>
-
-</body>
-</html>
