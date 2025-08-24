@@ -112,3 +112,193 @@
 </main>
 
 <!-- باقي الكود (مودال السلة + السكربت) كما هو عندك -->
+
+
+
+<!-- مودال السلة -->
+<div class="modal" id="cartModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-shopping-cart"></i> السلة</h3>
+      <div>
+        <button onclick="clearCart()" title="إفراغ السلة"><i class="fas fa-trash"></i></button>
+        <button onclick="closeCart()" title="إغلاق"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <table id="cart-table">
+      <thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>حذف</th></tr></thead>
+      <tbody id="cart-body"></tbody>
+      <tfoot><tr><td colspan="2">المجموع</td><td id="cart-total">0</td><td></td></tr></tfoot>
+    </table>
+    <div id="checkout">
+      <h4>معلومات الزبون</h4>
+      <div class="form-group"><input id="customerName" placeholder="👤 الاسم الكامل"></div>
+      <div class="form-group"><input id="customerPhone" placeholder="📞 رقم الهاتف"></div>
+      <div class="form-group"><input id="customerAddress" placeholder="📍 العنوان"></div>
+      <div class="checkout-btns">
+        <button class="btn" onclick="checkout('whatsapp')"><i class="fab fa-whatsapp"></i> شراء عبر واتساب</button>
+        <button class="btn" onclick="checkout('google')"><i class="fas fa-credit-card"></i> شراء عبر Google</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- سهم للأعلى -->
+<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
+
+<footer>
+  <div>
+    <h4><i class="fas fa-store"></i> مشتلة السلام</h4>
+    <p>أجود أنواع الشتلات والخدمات الزراعية</p>
+    <a href="#" class="shop-btn"><i class="fas fa-map-marker-alt"></i> توجه إلى المشتل</a>
+  </div>
+  <div>
+    <h4><i class="fas fa-map-marker-alt"></i> العنوان</h4>
+    <p>حي السلام - الجزائر</p>
+    <h4><i class="fas fa-phone"></i> الهاتف</h4>
+    <p>0697 743 721</p>
+  </div>
+  <div>
+    <h4><i class="fas fa-share-alt"></i> تابعنا</h4>
+    <a href="#"><i class="fab fa-facebook"></i> فيسبوك</a>
+    <a href="#"><i class="fab fa-instagram"></i> إنستغرام</a>
+    <a href="#"><i class="fab fa-whatsapp"></i> واتساب</a>
+  </div>
+  <div>
+    <h4><i class="fas fa-cogs"></i> خدماتنا</h4>
+    <p>🌱 بيع الشتلات</p>
+    <p>🚚 التوصيل</p>
+    <p>🛠️ الاستشارات الزراعية</p>
+  </div>
+</footer>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbxMYSinB7TRS-wtpunBOT9Telb6pKAMvuRTWfc12elRnvcwsO0VUT1s0arOfG-S9-vPHA/exec";
+let allProducts=[],cart=[];
+
+async function loadProducts(){
+  const res=await fetch(API_URL+"?sheet=products");
+  allProducts=await res.json();
+  renderProducts(allProducts);
+  renderCategoriesMenu(allProducts);
+}
+
+function renderProducts(products){
+  const container=document.getElementById("categories-container");
+  container.innerHTML="";
+  const grouped={};
+  products.forEach(p=>{
+    const cat=(p["الفئة "]||"غير مصنف").trim();
+    (grouped[cat] ||= []).push(p);
+  });
+  Object.entries(grouped).forEach(([cat,items])=>{
+    const section=document.createElement("section");
+    section.className="category";
+    section.innerHTML=`<div class="category-header"><h2><i class="fas fa-leaf"></i> ${cat}</h2></div><div class="products"></div>`;
+    const wrap=section.querySelector(".products");
+    items.forEach(p=>{
+      const card=document.createElement("div");
+      card.className="card";
+      card.innerHTML=`
+        <img src="${p["رابط الصورة"]||'https://via.placeholder.com/200x150'}">
+        <h3>${p["اسم المنتج"]}</h3>
+        <p>${p["السعر "]} دج</p>
+        <button class="btn"><i class="fas fa-cart-plus"></i> إضافة للسلة</button>`;
+      card.querySelector("button").onclick=()=>addToCart(p);
+      wrap.appendChild(card);
+    });
+    container.appendChild(section);
+  });
+}
+
+function renderCategoriesMenu(products){
+  const menu=document.getElementById("categories-menu");
+  menu.innerHTML="";
+  const cats=[...new Set(products.map(p=>(p["الفئة "]||"غير مصنف").trim()))];
+  cats.forEach(cat=>{
+    const a=document.createElement("a");
+    a.href="#";a.textContent=cat;
+    a.onclick=()=>filterByCategory(cat);
+    menu.appendChild(a);
+  });
+}
+
+function filterProducts(){
+  const q=document.getElementById("search-input").value.trim();
+  const results=allProducts.filter(p=>p["اسم المنتج"].includes(q)||p["الفئة "].includes(q));
+  renderProducts(results);
+}
+function filterByCategory(cat){
+  const results=allProducts.filter(p=>(p["الفئة "]||"").trim()===cat);
+  renderProducts(results);
+}
+
+function addToCart(product){
+  const existing=cart.find(i=>i.id===product.id);
+  if(existing){existing.qty++;}
+  else{cart.push({id:product.id,name:product["اسم المنتج"],price:product["السعر "],qty:1});}
+  renderCart();
+  showToast(`✅ تم إضافة ${product["اسم المنتج"]} للسلة`);
+}
+
+function renderCart(){
+  const body=document.getElementById("cart-body");body.innerHTML="";
+  let total=0,count=0;
+  cart.forEach(item=>{
+    total+=item.price*item.qty;count+=item.qty;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${item.name}</td>
+      <td><input type="number" value="${item.qty}" min="1" onchange="updateQty(${item.id},this.value)"></td>
+      <td>${item.price*item.qty}</td>
+      <td><span class="remove" onclick="removeFromCart(${item.id})"><i class="fas fa-times-circle"></i></span></td>`;
+    body.appendChild(tr);
+  });
+  document.getElementById("cart-total").innerText=total;
+  document.getElementById("cart-count").innerText=count;
+  document.getElementById("cart-sum").innerText=total;
+}
+
+function updateQty(id,val){
+  const it=cart.find(i=>i.id===id);
+  if(it){it.qty=parseInt(val)||1;}
+  renderCart();
+}
+function removeFromCart(id){cart=cart.filter(i=>i.id!==id);renderCart();}
+function clearCart(){cart=[];renderCart();}
+
+function openCart(){document.getElementById("cartModal").style.display="flex";}
+function closeCart(){document.getElementById("cartModal").style.display="none";}
+
+function checkout(method){
+  const name=document.getElementById("customerName").value.trim();
+  const phone=document.getElementById("customerPhone").value.trim();
+  const address=document.getElementById("customerAddress").value.trim();
+  if(!name||!phone||cart.length===0){alert("⚠️ أدخل البيانات وأضف منتجات");return;}
+  const itemsStr=cart.map(i=>`${i.name} x${i.qty}`).join(", ");
+  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+
+  fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addOrder",customerName:name,phone,customerAddress:address,items:itemsStr,total:total,status:"جديد"})});
+
+  if(method==="whatsapp"){
+    const msg=`طلب جديد:%0A👤 ${name}%0A📞 ${phone}%0A📍 ${address}%0A🛒 ${itemsStr}%0A💰 ${total} دج`;
+    window.open(`https://wa.me/213697743721?text=${msg}`,"_blank");
+  }else{alert("✅ تم إرسال الطلب إلى المشتلة بنجاح!");}
+  cart=[];renderCart();closeCart();
+}
+
+function showToast(msg){
+  const toast=document.getElementById("toast");
+  toast.innerText=msg;
+  toast.className="show";
+  setTimeout(()=>toast.className=toast.className.replace("show",""),3000);
+}
+
+window.onscroll=()=>{document.getElementById("back-to-top").style.display=window.scrollY>200?"block":"none";}
+loadProducts();
+</script>
+
+</body>
+</html>
