@@ -82,40 +82,6 @@
       text-decoration: none;
     }
     
-    nav .dropdown {
-      position: relative;
-    }
-    
-    nav .dropdown-content {
-      display: none;
-      position: absolute;
-      background: #fff;
-      color: #000;
-      min-width: 180px;
-      box-shadow: var(--box-shadow);
-      z-index: 999;
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      margin-top: 0.5rem;
-    }
-    
-    nav .dropdown-content a {
-      color: var(--text-dark);
-      display: block;
-      padding: 0.8rem 1rem;
-      text-align: right;
-      transition: all 0.2s;
-    }
-    
-    nav .dropdown-content a:hover {
-      background: #f5f5f5;
-      padding-right: 1.2rem;
-    }
-    
-    nav .dropdown:hover .dropdown-content {
-      display: block;
-    }
-    
     /* تحسين محرك البحث */
     .search-container {
       width: 100%;
@@ -156,6 +122,48 @@
       transform: translateY(-50%);
       color: #888;
       font-size: 1.1rem;
+    }
+    
+    /* توبيبات الأقسام في سطر واحد */
+    .categories-tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: 0.5rem;
+      padding: 1rem;
+      margin: 0 auto;
+      max-width: 1200px;
+      scrollbar-width: thin;
+      -ms-overflow-style: none;
+    }
+    
+    .categories-tabs::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    .categories-tabs::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+    
+    .tab {
+      background: #e8f5e9;
+      padding: 0.7rem 1.5rem;
+      border-radius: 25px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-weight: 500;
+      transition: all 0.3s;
+      border: 1px solid #c8e6c9;
+    }
+    
+    .tab:hover {
+      background: #c8e6c9;
+    }
+    
+    .tab.active {
+      background: var(--primary-color);
+      color: white;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
     }
     
     /* تحسين شريط السلة العلوي */
@@ -216,11 +224,6 @@
     .category {
       padding: 1.5rem 0;
       margin-bottom: 2rem;
-    }
-    
-    .category:not(:first-child) {
-      border-top: 2px dashed #c8e6c9;
-      padding-top: 2.5rem;
     }
     
     .category-header {
@@ -300,6 +303,46 @@
     .btn:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
+    }
+    
+    /* زر السلة العائم */
+    .floating-cart {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      background: var(--primary-color);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
+    }
+    
+    .floating-cart:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+    
+    .cart-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #f44336;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
     }
     
     /* تحسين مودال السلة */
@@ -510,7 +553,7 @@
     #back-to-top {
       position: fixed;
       bottom: 25px;
-      left: 25px;
+      right: 25px;
       background: var(--primary-color);
       color: #fff;
       width: 50px;
@@ -531,16 +574,22 @@
       transform: translateY(-3px);
     }
     
-    /* تحسين الفوتر */
+    /* تحسين الفوتر - 3 أقسام */
     footer {
       background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
       color: #fff;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
       padding: 3rem 2rem;
-      text-align: right;
+      text-align: center;
       margin-top: 3rem;
+    }
+    
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     footer h4 {
@@ -601,6 +650,12 @@
     }
     
     /* تصميم متجاوب */
+    @media (max-width: 992px) {
+      footer {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
     @media (max-width: 768px) {
       .header-content {
         flex-direction: column;
@@ -644,6 +699,13 @@
       footer h4, footer a {
         justify-content: center;
       }
+      
+      .floating-cart {
+        bottom: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+      }
     }
   </style>
 </head>
@@ -653,10 +715,7 @@
   <div class="header-content">
     <h1><i class="fas fa-seedling"></i> مشتلة السلام</h1>
     <nav>
-      <div class="dropdown">
-        <a href="#products"><i class="fas fa-leaf"></i> منتجاتنا</a>
-        <div class="dropdown-content" id="categories-menu"><a>جارٍ التحميل...</a></div>
-      </div>
+      <a href="#products"><i class="fas fa-leaf"></i> منتجاتنا</a>
       <a href="#about"><i class="fas fa-info-circle"></i> عن المشتلة</a>
       <a href="#contact"><i class="fas fa-phone-alt"></i> تواصل معنا</a>
     </nav>
@@ -668,6 +727,11 @@
     <input type="text" id="search-input" placeholder="ابحث عن منتج..." oninput="filterProducts()">
     <i class="fas fa-search"></i>
   </div>
+</div>
+
+<!-- توبيبات الأقسام في سطر واحد -->
+<div class="categories-tabs" id="categories-tabs">
+  <!-- سيتم ملؤها بواسطة JavaScript -->
 </div>
 
 <!-- شريط السلة المحسن -->
@@ -682,6 +746,12 @@
 <main id="categories-container">
   <p style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin"></i> جارٍ تحميل المنتجات...</p>
 </main>
+
+<!-- زر السلة العائم -->
+<div class="floating-cart" onclick="openCart()">
+  <i class="fas fa-shopping-cart"></i>
+  <div class="cart-count" id="floating-cart-count">0</div>
+</div>
 
 <!-- مودال السلة المحسن -->
 <div class="modal" id="cartModal">
@@ -739,29 +809,26 @@
 </div>
 
 <footer>
-  <div>
+  <div class="footer-section">
     <h4><i class="fas fa-store"></i> مشتلة السلام</h4>
     <p>أجود أنواع الشتلات والخدمات الزراعية</p>
     <a href="#" class="shop-btn"><i class="fas fa-map-marker-alt"></i> توجه إلى المشتل</a>
   </div>
-  <div>
+  
+  <div class="footer-section">
     <h4><i class="fas fa-map-marker-alt"></i> العنوان</h4>
     <p>حي السلام - الجزائر</p>
     <h4><i class="fas fa-phone"></i> الهاتف</h4>
     <p>0697 743 721</p>
   </div>
-  <div>
+  
+  <div class="footer-section">
     <h4><i class="fas fa-share-alt"></i> تابعنا</h4>
     <a href="#"><i class="fab fa-facebook"></i> فيسبوك</a>
     <a href="#"><i class="fab fa-instagram"></i> إنستغرام</a>
     <a href="#"><i class="fab fa-whatsapp"></i> واتساب</a>
   </div>
-  <div>
-    <h4><i class="fas fa-cogs"></i> خدماتنا</h4>
-    <p><i class="fas fa-seedling"></i> بيع الشتلات</p>
-    <p><i class="fas fa-truck"></i> التوصيل</p>
-    <p><i class="fas fa-tools"></i> الاستشارات الزراعية</p>
-  </div>
+  
   <div class="copyright">
     <p>جميع الحقوق محفوظة &copy; 2023 مشتلة السلام</p>
   </div>
@@ -776,7 +843,7 @@ async function loadProducts(){
     const res=await fetch(API_URL+"?sheet=products");
     allProducts=await res.json();
     renderProducts(allProducts);
-    renderCategoriesMenu(allProducts);
+    renderCategoriesTabs(allProducts);
   } catch (error) {
     document.getElementById("categories-container").innerHTML = `
       <div style="text-align:center; padding:3rem; color:#d32f2f;">
@@ -836,20 +903,33 @@ function renderProducts(products){
   });
 }
 
-function renderCategoriesMenu(products){
-  const menu=document.getElementById("categories-menu");
-  menu.innerHTML="";
+function renderCategoriesTabs(products){
+  const tabsContainer=document.getElementById("categories-tabs");
+  tabsContainer.innerHTML="";
+  
+  // إضافة تبويب "الكل"
+  const allTab=document.createElement("div");
+  allTab.className="tab active";
+  allTab.textContent="الكل";
+  allTab.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    allTab.classList.add("active");
+    renderProducts(allProducts);
+  };
+  tabsContainer.appendChild(allTab);
+  
+  // إضافة تبويبات لكل فئة
   const cats=[...new Set(products.map(p=>(p["الفئة "]||"غير مصنف").trim()))];
   cats.forEach(cat=>{
-    const a=document.createElement("a");
-    a.href="#cat-"+cat.replace(/\s+/g, '-');
-    a.textContent=cat;
-    a.onclick=(e)=>{
-      e.preventDefault();
+    const tab=document.createElement("div");
+    tab.className="tab";
+    tab.textContent=cat;
+    tab.onclick=()=>{
+      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
       filterByCategory(cat);
-      document.querySelector(a.getAttribute('href')).scrollIntoView({behavior: 'smooth'});
     };
-    menu.appendChild(a);
+    tabsContainer.appendChild(tab);
   });
 }
 
@@ -906,6 +986,7 @@ function renderCart(){
   document.getElementById("cart-total").textContent = total + " دج";
   document.getElementById("cart-count").textContent = count;
   document.getElementById("cart-sum").textContent = total;
+  document.getElementById("floating-cart-count").textContent = count;
 }
 
 function updateQty(id,val){
@@ -954,7 +1035,7 @@ function checkout(method){
   }
   
   if(!phone){
-    showToast("⚠️ يرجى إدخال رقم الهاتف");
+    showToast("⚠️ يرجى إدخال رقم اله電話ف");
     document.getElementById("customerPhone").focus();
     return;
   }
